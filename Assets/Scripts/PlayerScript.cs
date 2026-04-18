@@ -22,7 +22,7 @@ public class PlayerScript : MonoBehaviour
                 GameObject pulse = Instantiate(prefabPulse);
                 pulse.transform.localPosition = transform.localPosition;
                 debugEmitted = true;
-            } else if (dashCooldownLeft == 0) {
+            } else if (dashCooldownLeft == 0 && movement.sqrMagnitude > .1f) {
                 dashTimeLeft = dashDuration;
             }
         }
@@ -43,16 +43,18 @@ public class PlayerScript : MonoBehaviour
         // Look.
         Vector2 look = GetStick("Horizontal2", "Vertical2");
         look.x *= -1;
-        float desiredLookAngle;
-        if (look == Vector2.zero) {
-            desiredLookAngle = Mathf.Atan2(movement.y, movement.x) * Mathf.Rad2Deg;
-        } else {
+        float desiredLookAngle = -999;
+        if (look != Vector2.zero) {
             desiredLookAngle = Mathf.Atan2(look.y, look.x) * Mathf.Rad2Deg;
+        } else if (movement != Vector2.zero) {
+            desiredLookAngle = Mathf.Atan2(movement.y, movement.x) * Mathf.Rad2Deg;
         }
-        float z = Mathf.SmoothDampAngle(transform.localRotation.eulerAngles.z, desiredLookAngle, ref vRot, .02f);
-        transform.localRotation = Quaternion.Euler(0, 0, z);
+        if (desiredLookAngle != -999) {
+            float z = Mathf.SmoothDampAngle(transform.localRotation.eulerAngles.z, desiredLookAngle, ref vRot, .02f);
+            transform.localRotation = Quaternion.Euler(0, 0, z);
+        }
         // Shoot.
-        if (look != Vector2.zero && dashCooldownLeft == 0) {
+        if (look != Vector2.zero && dashTimeLeft == 0) {
             if (shootCooldownLeft > 0) {
                 shootCooldownLeft -= Time.deltaTime;
             }
@@ -74,15 +76,9 @@ public class PlayerScript : MonoBehaviour
         float jx = Input.GetAxis(xLabel);
         float jy = Input.GetAxis(yLabel);
         Vector2 v = new Vector2(jx, jy);
-        if (v != Vector2.zero) {
-            if (v.sqrMagnitude > 1) {
-                v.Normalize();
-            }
-            return v;
+        if (v.sqrMagnitude < .2f) {
+            return Vector2.zero;
         }
-        float x = Input.GetKey(KeyCode.D) ? 1 : (Input.GetKey(KeyCode.A) ? -1 : 0);
-        float y = Input.GetKey(KeyCode.W) ? 1 : (Input.GetKey(KeyCode.S) ? -1 : 0);
-        v = new Vector2(x, y);
         if (v.sqrMagnitude > 1) {
             v.Normalize();
         }

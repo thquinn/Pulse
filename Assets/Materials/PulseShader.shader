@@ -56,6 +56,11 @@ Shader "thquinn/PulseShader"
 		float r = length(uv);
 		float scale = length(unity_ObjectToWorld._m00_m10_m20);
 		float thickness = _Thickness / scale;
+		// Effects.
+		float theta = atan2(uv.y, uv.x);
+		float normsin = (sin(theta * 10 * scale) + 1) / 2;
+		thickness += normsin * .1 / scale;
+		// Back to the rest...
 		float blur = .001 / scale;
 		float c = min(smoothstep(1, 1 - blur, r), smoothstep(1 - thickness - blur, 1 - thickness, r));
 		fixed4 col = tex2D(_MainTex, i.uv);

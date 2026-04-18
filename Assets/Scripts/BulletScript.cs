@@ -25,10 +25,12 @@ public class BulletScript : MonoBehaviour {
     }
 
     public void OnCollisionEnter2D(Collision2D collision) {
-        Destroy(gameObject);
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision) {
+        EmitterScript emitter = collision.gameObject.GetComponent<EmitterScript>();
+        if (emitter == null) {
+            PooledParticleScript.Trigger(PooledParticleType.BulletBlocked, transform.localPosition, transform.localRotation * Quaternion.Euler(0, 0, 180));
+        } else {
+            emitter.Damage();
+        }
         Destroy(gameObject);
     }
 }

@@ -21,11 +21,14 @@ public class EmitterScript : MonoBehaviour {
         sr.SetPropertyBlock(propertyBlock);
     }
 
-    private void OnTriggerStay2D(Collider2D collision) {
+    public void Pulsed() {
         if (timer >= cooldown) {
             GameObject pulse = Instantiate(prefabPulse);
             pulse.transform.localPosition = transform.localPosition;
             timer = 0;
         }
+    }
+    public void Damage() {
+
     }
 }
