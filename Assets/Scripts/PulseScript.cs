@@ -8,12 +8,17 @@ public class PulseScript : MonoBehaviour
 
     public float lifespan, growSpeed, fadeSpeed;
 
+    EmitterScript parentEmitter;
     float t, fade, initialColliderRadiusDelta;
 
     void Start() {
+        transform.localRotation = Quaternion.Euler(0, 0, Random.Range(0, 360f));
         sr.SetAlpha(0);
         collidre.enabled = false;
         initialColliderRadiusDelta = collidreOuterCircle.radius - collidreInnerCircle.radius;
+    }
+    public void Init(EmitterScript parentEmitter) {
+        this.parentEmitter = parentEmitter;
     }
 
     void Update() {
@@ -33,6 +38,6 @@ public class PulseScript : MonoBehaviour
     }
 
     private void OnTriggerStay2D(Collider2D collision) {
-        collision.gameObject.GetComponent<EmitterScript>()?.Pulsed();
+        collision.gameObject.GetComponent<EmitterScript>()?.Pulsed(parentEmitter);
     }
 }

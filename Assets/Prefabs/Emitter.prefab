@@ -27,7 +27,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.9, y: 0.9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7020891979820539471}
@@ -213,9 +213,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   prefabPulse: {fileID: 8549616923451600406, guid: a65a707b8ff80aa409f0395a3d7c294b, type: 3}
-  materialPulse: {fileID: 0}
+  prefabLink: {fileID: 5416359459154128689, guid: 0051cad660304a94192b831bf947d763, type: 3}
   sr: {fileID: 7833360964474193447}
-  cooldown: 3
+  cooldown: 4
 --- !u!50 &8833524511333938354
 Rigidbody2D:
   serializedVersion: 5

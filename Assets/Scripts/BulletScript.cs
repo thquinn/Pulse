@@ -27,7 +27,7 @@ public class BulletScript : MonoBehaviour {
     public void OnCollisionEnter2D(Collision2D collision) {
         EmitterScript emitter = collision.gameObject.GetComponent<EmitterScript>();
         if (emitter == null) {
-            PooledParticleScript.Trigger(PooledParticleType.BulletBlocked, transform.localPosition, transform.localRotation * Quaternion.Euler(0, 0, 180));
+            PooledParticleScript.Trigger(PooledParticleType.BulletBlocked, transform.localPosition, Quaternion.Euler(0, 0, 180) * transform.localRotation);
         } else {
             emitter.Damage();
         }

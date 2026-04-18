@@ -566,4 +566,4 @@ MonoBehaviour:
   collidreInnerCircle: {fileID: 8751194059742034763}
   lifespan: 4
   growSpeed: 5
-  fadeSpeed: 5
+  fadeSpeed: 2
