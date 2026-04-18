@@ -17,7 +17,7 @@ public class EmitterScript : MonoBehaviour {
     void Update() {
         timer = Mathf.Min(timer + Time.deltaTime, cooldown);
         MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
-        propertyBlock.SetFloat("_Revealed", timer / cooldown);
+        propertyBlock.SetFloat("_Revealed", timer / cooldown + .001f);
         sr.SetPropertyBlock(propertyBlock);
     }
 

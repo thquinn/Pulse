@@ -27,7 +27,8 @@ public class PulseScript : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        transform.localScale += new Vector3(growSpeed * Time.deltaTime, growSpeed * Time.deltaTime, 0);
+        if (t < 2)
+            transform.localScale += new Vector3(growSpeed * Time.deltaTime, growSpeed * Time.deltaTime, 0);
         collidreInnerCircle.radius = collidreOuterCircle.radius - initialColliderRadiusDelta / transform.localScale.x;
         sr.SetAlpha(fade);
     }

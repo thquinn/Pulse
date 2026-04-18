@@ -57,7 +57,7 @@ Shader "thquinn/ClockShader"
 	col *= _Color;
 	col *= i.color;
 	float theta = atan2(.5 - i.uv.x, .5 - i.uv.y) + 3.141;
-	col.a *= smoothstep(_Revealed + .01, _Revealed, theta / 6.28);
+	col.a *= smoothstep(_Revealed + .001, _Revealed, theta / 6.28);
 	return col;
 	}
 
