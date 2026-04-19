@@ -6,7 +6,7 @@ public class EmitterScript : MonoBehaviour {
 
     static int PULSES_TO_LINK = 4;
 
-    public GameObject prefabPulse, prefabLink;
+    public GameObject prefabPulse, prefabLink, prefabPreboid, prefabBoid;
     public SpriteRenderer sr;
     public AudioSource sfxHit, sfxPulse, sfxDie;
 
@@ -17,12 +17,14 @@ public class EmitterScript : MonoBehaviour {
     float maxHP;
     float timer;
     int pulseCount;
+    [HideInInspector] public Dictionary<EmitterScript, LinkScript> links;
     Vector3 vScale;
     float vfxDamageLastTime;
 
     void Start() {
         maxHP = hp;
         timer = cooldown;
+        links = new();
     }
 
     void Update() {
@@ -43,7 +45,10 @@ public class EmitterScript : MonoBehaviour {
                 int triggerCount = triggerCounts.ContainsKey(pair) ? triggerCounts[pair] + 1 : 1;
                 triggerCounts[pair] = triggerCount;
                 if (triggerCount == PULSES_TO_LINK) {
-                    Instantiate(prefabLink).GetComponent<LinkScript>().Init(pair);
+                    LinkScript link = Instantiate(prefabLink).GetComponent<LinkScript>();
+                    link.Init(pair);
+                    links[parentEmitter] = link;
+                    parentEmitter.links[this] = link;
                 }
             }
             timer = 0;
@@ -61,6 +66,14 @@ public class EmitterScript : MonoBehaviour {
         pulseCount++;
         sfxPulse.pitch = Random.Range(1f, 2f);
         sfxPulse.Play();
+        foreach (EmitterScript linkedEmitter in links.Keys) {
+            if (linkedEmitter == null) continue;
+            Vector2 direction = (linkedEmitter.transform.localPosition - transform.localPosition).normalized;
+            Vector2 offsetDirection = Quaternion.Euler(0, 0, -20) * direction;
+            Vector2 spawnPosition = (Vector2) transform.localPosition + offsetDirection * 1.5f;
+            GameObject preboid = Instantiate(prefabPreboid);
+            preboid.GetComponent<PreboidScript>().Init(spawnPosition, direction, linkedEmitter, links[linkedEmitter]);
+        }
     }
     public void Damage(int amount) {
         if (hp <= 0) return;
@@ -84,5 +97,10 @@ public class EmitterScript : MonoBehaviour {
             vScale = new Vector3(-vfxDamageVelocity, -vfxDamageVelocity, 0);
             vfxDamageLastTime = Time.time;
         }
+    }
+    public void SpawnBoid() {
+        Vector2 randomDirection = Random.onUnitCircle;
+        Vector2 position = (Vector2) transform.localPosition + randomDirection;
+        Instantiate(prefabBoid, position, Quaternion.Euler(0, 0, Mathf.Atan2(randomDirection.y, randomDirection.x) * Mathf.Rad2Deg));
     }
 }

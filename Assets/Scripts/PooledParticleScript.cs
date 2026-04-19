@@ -35,5 +35,5 @@ public class PooledParticleScript : MonoBehaviour
 }
 
 public enum PooledParticleType {
-    BulletBlocked, BulletUpgrade, EmitterDamage, EmitterDie, PulseDissolve
+    BulletBlocked, BulletUpgrade, EmitterDamage, EmitterDie, PulseDissolve, BoidDamage, BoidDie, PreboidDone
 }

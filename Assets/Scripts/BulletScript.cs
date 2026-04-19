@@ -40,13 +40,18 @@ public class BulletScript : MonoBehaviour {
 
     public void OnCollisionEnter2D(Collision2D collision) {
         EmitterScript emitter = collision.gameObject.GetComponent<EmitterScript>();
-        if (emitter == null) {
-            PooledParticleScript.Trigger(PooledParticleType.BulletBlocked, transform.localPosition, Quaternion.Euler(0, 0, 180) * transform.localRotation);
-            SFXScript.SFXBulletDie(transform.localPosition);
-        } else {
+        BoidDamageScript boid = collision.gameObject.GetComponent<BoidDamageScript>();
+        if (emitter != null) {
             emitter.Damage(upgraded ? 2 : 1);
             Vector3 normal = collision.GetContact(0).normal;
             PooledParticleScript.Trigger(PooledParticleType.EmitterDamage, transform.localPosition - normal * .2f, Quaternion.LookRotation(normal));
+        } else if (boid != null) {
+            boid.Damage(upgraded ? 2 : 1);
+            Vector3 normal = collision.GetContact(0).normal;
+            PooledParticleScript.Trigger(PooledParticleType.BoidDamage, transform.localPosition - normal * .1f, Quaternion.LookRotation(normal));
+        } else {
+            PooledParticleScript.Trigger(PooledParticleType.BulletBlocked, transform.localPosition, Quaternion.Euler(0, 0, 180) * transform.localRotation);
+            SFXScript.SFXBulletDie(transform.localPosition);
         }
         Destroy(gameObject);
         destroying = true;

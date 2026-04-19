@@ -216,6 +216,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   prefabPulse: {fileID: 8549616923451600406, guid: a65a707b8ff80aa409f0395a3d7c294b, type: 3}
   prefabLink: {fileID: 5416359459154128689, guid: 0051cad660304a94192b831bf947d763, type: 3}
+  prefabPreboid: {fileID: 4942702599303102831, guid: c8733f196da5f494c904b7035e605c33, type: 3}
+  prefabBoid: {fileID: 648626619114548925, guid: f1d077daa0022754cbf59ad961ced426, type: 3}
   sr: {fileID: 7833360964474193447}
   sfxHit: {fileID: 6153760701533034304}
   sfxPulse: {fileID: 7792403736861689894}
@@ -226,6 +228,7 @@ MonoBehaviour:
   vfxDamageDampTime: 0.05
   vfxDamageCooldown: 0.1
   noPulseOnDeath: 0
+  linkedEmitters: []
 --- !u!50 &8833524511333938354
 Rigidbody2D:
   serializedVersion: 5
