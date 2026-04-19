@@ -10,6 +10,7 @@ public class EmitterScript : MonoBehaviour {
 
     public float hp, cooldown;
     public float vfxDamageVelocity, vfxDamageDampTime, vfxDamageCooldown;
+    [HideInInspector] public bool noPulseOnDeath;
 
     float timer;
     int pulseCount;
@@ -59,7 +60,7 @@ public class EmitterScript : MonoBehaviour {
         if (hp <= 0) return;
         hp -= amount;
         if (hp <= 0) {
-            if (timer >= cooldown) {
+            if (timer >= cooldown && !noPulseOnDeath) {
                 EmitPulse();
             }
             Destroy(gameObject);

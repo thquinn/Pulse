@@ -3,7 +3,7 @@ using UnityEngine;
 public class BorderScript : MonoBehaviour
 {
     public GameObject prefabWall;
-    public Material materialPulse;
+    public Material materialPulse, materialParticlePulseDissolve;
 
     public Vector2 size;
     public float expand;
@@ -19,6 +19,8 @@ public class BorderScript : MonoBehaviour
     }
 
     void Update() {
-        materialPulse.SetVector("_Extents", new Vector2((size.x + expand) / 2, (size.y + expand) / 2));
+        Vector2 extents = new Vector2((size.x + expand) / 2, (size.y + expand) / 2);
+        materialPulse.SetVector("_Extents", extents);
+        materialParticlePulseDissolve.SetVector("_Extents", extents);
     }
 }

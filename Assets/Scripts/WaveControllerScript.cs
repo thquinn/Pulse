@@ -3,6 +3,8 @@ using System.Linq;
 using UnityEngine;
 
 public class WaveControllerScript : MonoBehaviour {
+    public static WaveControllerScript instance;
+
     static float PREWAVE_PAUSE = 3;
     static float SHRINK = 1, MIN_DIST = 5, MAX_DIST = 12;
 
@@ -14,11 +16,13 @@ public class WaveControllerScript : MonoBehaviour {
     [HideInInspector] public int waveCount;
     [HideInInspector] public float timeLeftInWave;
     [HideInInspector] public int score;
+    int hitsThisWave;
 
     List<EmitterScript> emitters;
     float prewavePause;
 
     void Start() {
+        instance = this;
         emitters = new List<EmitterScript>();
         prewavePause = PREWAVE_PAUSE;
     }
@@ -36,6 +40,7 @@ public class WaveControllerScript : MonoBehaviour {
         // Set timer.
         waveCount++;
         timeLeftInWave = 30;
+        hitsThisWave = 0;
     }
     List<Vector2> GetSpawnCoors() {
         List<Vector2> samples = PoissonDiskSampler.Sample(borderScript.size.x - SHRINK, borderScript.size.y - SHRINK, MIN_DIST, 100);
@@ -73,13 +78,30 @@ public class WaveControllerScript : MonoBehaviour {
         }
         if (emitters.Count > 0) {
             timeLeftInWave = Mathf.Max(timeLeftInWave - Time.deltaTime, 0);
+            if (emitters.Count == 1) {
+                emitters[0].noPulseOnDeath = true;
+            }
         } else if (prewavePause == 0) {
-            prewavePause = PREWAVE_PAUSE;
+            EndWave();
         } else if (prewavePause > 0) {
             prewavePause = Mathf.Max(prewavePause - Time.deltaTime, 0);
             if (prewavePause == 0) {
                 StartWave();
             }
         }
+    }
+    void EndWave() {
+        // Destroy all pulses.
+        PulseScript[] pulses = FindObjectsByType<PulseScript>().ToArray();
+        foreach (PulseScript pulse in pulses) {
+            pulse.Dissolve();
+        }
+        prewavePause = PREWAVE_PAUSE;
+    }
+
+    public void GotHit() {
+        int penalty = 3 + 2 * hitsThisWave;
+        timeLeftInWave = Mathf.Max(0, timeLeftInWave - penalty);
+        hitsThisWave++;
     }
 }

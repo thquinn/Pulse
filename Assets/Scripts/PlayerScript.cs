@@ -125,6 +125,7 @@ public class PlayerScript : MonoBehaviour
         movement = Vector2.zero;
         hitStunLeft = hitStun;
         hitInvincibilityLeft = hitInvincibility;
+        WaveControllerScript.instance.GotHit();
         return true;
     }
 }

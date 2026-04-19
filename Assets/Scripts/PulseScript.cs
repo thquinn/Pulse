@@ -22,6 +22,10 @@ public class PulseScript : MonoBehaviour
     }
 
     void Update() {
+        if (Input.GetKeyDown(KeyCode.F1)) {
+            Dissolve();
+            return;
+        }
         t += Time.deltaTime;
         if (t > lifespan && fadeSpeed > 0) {
             fadeSpeed *= -1;
@@ -35,6 +39,10 @@ public class PulseScript : MonoBehaviour
         transform.localScale += new Vector3(growSpeed * Time.deltaTime, growSpeed * Time.deltaTime, 0);
         collidreInnerCircle.radius = collidreOuterCircle.radius - initialColliderRadiusDelta / transform.localScale.x;
         sr.SetAlpha(fade);
+    }
+    public void Dissolve() {
+        Destroy(gameObject);
+        PooledParticleScript.TriggerScaledCircle(PooledParticleType.PulseDissolve, transform.localPosition, Quaternion.identity, transform.localScale.x / 2);
     }
 
     private void OnTriggerStay2D(Collider2D collision) {

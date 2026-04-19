@@ -7,6 +7,9 @@ public class PooledParticleScript : MonoBehaviour
     public static void Trigger(PooledParticleType type, Vector2 position, Quaternion rotation) {
         DICT[type].Trigger(position, rotation);
     }
+    public static void TriggerScaledCircle(PooledParticleType type, Vector2 position, Quaternion rotation, float scale) {
+        DICT[type].TriggerScaledCircle(position, rotation, scale);
+    }
 
     public PooledParticleType type;
     ParticleSystem particles;
@@ -18,12 +21,23 @@ public class PooledParticleScript : MonoBehaviour
         particles = GetComponent<ParticleSystem>();
     }
     public void Trigger(Vector2 position, Quaternion rotation) {
-        transform.localPosition = position;
-        transform.localRotation = rotation;
-        particles.Emit((int)particles.emission.GetBurst(0).count.constant);
+        var ep = new ParticleSystem.EmitParams();
+        ep.position = position;
+        ep.rotation3D = rotation.eulerAngles;
+        ep.applyShapeToPosition = true; // shape module offsets apply relative to ep.position
+        particles.Emit(ep, (int)particles.emission.GetBurst(0).count.constant);
+    }
+    public void TriggerScaledCircle(Vector2 position, Quaternion rotation, float scale) {
+        var shape = particles.shape;
+        shape.radius = scale;
+        var burstCount = particles.emission.GetBurst(0).count;
+        float oldConstant = burstCount.constant;
+        burstCount.constant = oldConstant * scale;
+        Trigger(position, rotation);
+        burstCount.constant = oldConstant;
     }
 }
 
 public enum PooledParticleType {
-    BulletBlocked, EmitterDamage,
+    BulletBlocked, EmitterDamage, PulseDissolve
 }
