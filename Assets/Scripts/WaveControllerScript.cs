@@ -8,7 +8,7 @@ public class WaveControllerScript : MonoBehaviour {
 
     static float PREWAVE_PAUSE = 3;
     static float SHRINK = 1, MIN_DIST = 5, MAX_DIST = 12;
-    static int SCORE_EMITTER = 100;
+    static int SCORE_EMITTER = 1000;
 
     public GameObject prefabEmitter;
 
@@ -82,12 +82,6 @@ public class WaveControllerScript : MonoBehaviour {
     }
 
     void Update() {
-        if (Input.GetKeyDown(KeyCode.F2)) {
-            textPopupContainerScore.AddPopup("blah " + Random.Range(10000, 9999999));
-        }
-        if (Input.GetKeyDown(KeyCode.F3)) {
-            borderScript.targetSize += new Vector2(5, 4);
-        }
         for (int i = emitters.Count - 1; i >= 0; i--) {
             if (emitters[i] == null) emitters.RemoveAt(i);
         }
@@ -106,17 +100,13 @@ public class WaveControllerScript : MonoBehaviour {
         }
     }
     void EndWave() {
-        // Destroy all pulses.
-        PulseScript[] pulses = FindObjectsByType<PulseScript>().ToArray();
-        foreach (PulseScript pulse in pulses) {
-            pulse.Dissolve();
-        }
+        Invoke("DissolveAllPulses", 1);
         prewavePause = PREWAVE_PAUSE;
         // Time left bonus.
         int millisLeft = Mathf.FloorToInt(timeLeftInWave * 1000);
         score += millisLeft;
         textPopupContainerScore.AddPopup($"time bonus +{millisLeft:N0}");
-        if (timeLeftInWave >= 10) {
+        if (timeLeftInWave >= 20) {
             waveNumber++;
             int bonus = SCORE_EMITTER * GetEmitterCountForWave(waveNumber + 1) * (waveNumber + 1);
             score += bonus;
@@ -133,6 +123,15 @@ public class WaveControllerScript : MonoBehaviour {
         float height = Mathf.Sqrt(area / aspect);
         float width = height * aspect;
         borderScript.targetSize = new Vector2(width, height);
+    }
+    void DissolveAllPulses() {
+        PulseScript[] pulses = FindObjectsByType<PulseScript>().ToArray();
+        foreach (PulseScript pulse in pulses) {
+            pulse.Dissolve();
+        }
+        if (pulses.Length > 0) {
+            SFXScript.SFXPulseDissolve();
+        }
     }
 
     public void GotHit() {

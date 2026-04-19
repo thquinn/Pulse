@@ -42,6 +42,7 @@ public class BulletScript : MonoBehaviour {
         EmitterScript emitter = collision.gameObject.GetComponent<EmitterScript>();
         if (emitter == null) {
             PooledParticleScript.Trigger(PooledParticleType.BulletBlocked, transform.localPosition, Quaternion.Euler(0, 0, 180) * transform.localRotation);
+            SFXScript.SFXBulletDie(transform.localPosition);
         } else {
             emitter.Damage(upgraded ? 2 : 1);
             Vector3 normal = collision.GetContact(0).normal;

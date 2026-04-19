@@ -27,12 +27,13 @@ public class PlayerScript : MonoBehaviour
     void Update() {
         // Dash.
         dashCooldownLeft = Mathf.Max(0, dashCooldownLeft - Time.deltaTime);
-        if (Input.anyKeyDown && dashCooldownLeft == 0 && movement.sqrMagnitude > .05f) {
+        if (Input.anyKeyDown && dashTimeLeft == 0 && dashCooldownLeft == 0 && movement.sqrMagnitude > .05f) {
             dashTimeLeft = dashDuration;
             dashInvincibilityLeft = dashInvincibilityDuration;
             for (float f = 0; f < dashDuration; f += .025f) {
                 Invoke("LeaveShadow", f);
             }
+            SFXScript.SFXDash();
         }
         // Movement.
         Vector3 movement3;
@@ -81,6 +82,7 @@ public class PlayerScript : MonoBehaviour
                     bullet.transform.localPosition += bullet.transform.right * shootForward;
                 }
                 shootCooldownLeft += shootCooldown;
+                SFXScript.SFXShoot();
             }
         }
         // Timers.
@@ -135,6 +137,7 @@ public class PlayerScript : MonoBehaviour
         hitStunLeft = hitStun;
         hitInvincibilityLeft = hitInvincibility;
         WaveControllerScript.instance.GotHit();
+        SFXScript.SFXPlayerHurt();
         return true;
     }
 }

@@ -22,10 +22,6 @@ public class PulseScript : MonoBehaviour
     }
 
     void Update() {
-        if (Input.GetKeyDown(KeyCode.F1)) {
-            Dissolve();
-            return;
-        }
         t += Time.deltaTime;
         if (t > lifespan && fadeSpeed > 0) {
             fadeSpeed *= -1;
