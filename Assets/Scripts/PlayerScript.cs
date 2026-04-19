@@ -53,8 +53,8 @@ public class PlayerScript : MonoBehaviour
             desiredLookAngle = Mathf.Atan2(movement.y, movement.x) * Mathf.Rad2Deg;
         }
         if (desiredLookAngle != -999) {
-            float z = Mathf.SmoothDampAngle(sr.transform.localRotation.eulerAngles.z, desiredLookAngle, ref vRot, .02f);
-            sr.transform.localRotation = Quaternion.Euler(0, 0, z);
+            float z = Mathf.SmoothDampAngle(sr.transform.parent.localRotation.eulerAngles.z, desiredLookAngle, ref vRot, .02f);
+            sr.transform.parent.localRotation = Quaternion.Euler(0, 0, z);
         }
         // Shoot.
         if (look != Vector2.zero && dashTimeLeft == 0) {

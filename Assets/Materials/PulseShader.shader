@@ -3,6 +3,7 @@ Shader "thquinn/PulseShader"
 	Properties{
 		_MainTex ("Texture", 2D) = "white" {}
 		_Thickness ("Thickness", Range(0, 1)) = 0
+		_Extents("Extents", Vector) = (0, 0, 0, 0)
 	}
 
 		SubShader{
@@ -30,6 +31,7 @@ Shader "thquinn/PulseShader"
 	float4 _MainTex_ST;
 
 	float _Thickness;
+	float2 _Extents;
 
 	struct appdata{
 		float4 vertex : POSITION;
@@ -41,6 +43,7 @@ Shader "thquinn/PulseShader"
 		float4 position : SV_POSITION;
 		float2 uv : TEXCOORD0;
 		fixed4 color : COLOR;
+		float3 worldPos : TEXCOORD1;
 	};
 
 	v2f vert(appdata v){
@@ -48,6 +51,7 @@ Shader "thquinn/PulseShader"
 		o.position = UnityObjectToClipPos(v.vertex);
 		o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 		o.color = v.color;
+		o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 		return o;
 	}
 
@@ -66,6 +70,9 @@ Shader "thquinn/PulseShader"
 		fixed4 col = tex2D(_MainTex, i.uv);
 		col *= i.color;
 		col.a *= c;
+		// Hide outside of borders.
+		col.a *= smoothstep(_Extents.x, _Extents.x - .01, abs(i.worldPos.x));
+		col.a *= smoothstep(_Extents.y, _Extents.y - .01, abs(i.worldPos.y));
 		return col;
 	}
 
