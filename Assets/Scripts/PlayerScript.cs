@@ -3,6 +3,8 @@ using UnityEngine.UI;
 
 public class PlayerScript : MonoBehaviour
 {
+    public static PlayerScript instance;
+
     public GameObject prefabBullet;
 
     public BorderScript borderScript;
@@ -16,6 +18,10 @@ public class PlayerScript : MonoBehaviour
     float shootCooldownLeft;
     float hitStunLeft, hitInvincibilityLeft;
     float vRot;
+
+    void Start() {
+        instance = this;
+    }
 
     void Update() {
         // Dash.

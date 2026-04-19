@@ -21,9 +21,9 @@ public class PooledParticleScript : MonoBehaviour
         particles = GetComponent<ParticleSystem>();
     }
     public void Trigger(Vector2 position, Quaternion rotation, float emitMultiplier = 1) {
+        transform.rotation = rotation;
         var ep = new ParticleSystem.EmitParams();
         ep.position = position;
-        ep.rotation3D = rotation.eulerAngles;
         ep.applyShapeToPosition = true;
         particles.Emit(ep, Mathf.RoundToInt(particles.emission.GetBurst(0).count.constant * emitMultiplier));
     }
