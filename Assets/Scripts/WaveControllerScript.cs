@@ -77,6 +77,9 @@ public class WaveControllerScript : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.F2)) {
             textPopupContainerScore.AddPopup("blah " + Random.Range(10000, 9999999));
         }
+        if (Input.GetKeyDown(KeyCode.F3)) {
+            borderScript.targetSize += new Vector2(5, 4);
+        }
         for (int i = emitters.Count - 1; i >= 0; i--) {
             if (emitters[i] == null) emitters.RemoveAt(i);
         }

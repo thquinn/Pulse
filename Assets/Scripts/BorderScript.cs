@@ -6,19 +6,20 @@ public class BorderScript : MonoBehaviour
     public Material materialPulse, materialParticlePulseDissolve;
 
     public Vector2 size;
+    [HideInInspector] public Vector2 targetSize;
     public float expand;
+    Vector2 vSize;
 
     void Start() {
-        Vector2 inflated = size + new Vector2(expand, expand);
-        // Right and left walls.
-        Instantiate(prefabWall).GetComponent<BorderWallScript>().Init(new Vector2(inflated.x / 2, 0), Quaternion.identity, size.y + expand - .5f);
-        Instantiate(prefabWall).GetComponent<BorderWallScript>().Init(new Vector2(-inflated.x / 2, 0), Quaternion.Euler(0, 0, 180), size.y + expand - .5f);
-        // Top and bottom walls.
-        Instantiate(prefabWall).GetComponent<BorderWallScript>().Init(new Vector2(0, inflated.y / 2), Quaternion.Euler(0, 0, 90), size.x + expand - .5f);
-        Instantiate(prefabWall).GetComponent<BorderWallScript>().Init(new Vector2(0, -inflated.y / 2), Quaternion.Euler(0, 0, 270), size.x + expand - .5f);
+        targetSize = size;
+        Instantiate(prefabWall, transform).GetComponent<BorderWallScript>().Init(this, BorderWallSide.Right);
+        Instantiate(prefabWall, transform).GetComponent<BorderWallScript>().Init(this, BorderWallSide.Left);
+        Instantiate(prefabWall, transform).GetComponent<BorderWallScript>().Init(this, BorderWallSide.Top);
+        Instantiate(prefabWall, transform).GetComponent<BorderWallScript>().Init(this, BorderWallSide.Bottom);
     }
 
     void Update() {
+        size = Vector2.SmoothDamp(size, targetSize, ref vSize, .5f);
         Vector2 extents = new Vector2((size.x + expand) / 2, (size.y + expand) / 2);
         materialPulse.SetVector("_Extents", extents);
         materialParticlePulseDissolve.SetVector("_Extents", extents);
