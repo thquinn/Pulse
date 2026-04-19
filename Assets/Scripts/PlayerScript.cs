@@ -11,10 +11,11 @@ public class PlayerScript : MonoBehaviour
     public SpriteRenderer sr;
     public Rigidbody2D rb2d;
 
-    public float speed, accel, dashSpeedMult, dashAccelMult, dashDuration, dashCooldown, shootCooldown, shootDivergence, shootForward, hitStun, hitInvincibility, hitKnockback, knockbackDecel;
+    public float speed, accel, dashSpeedMult, dashAccelMult, dashDuration, dashInvincibilityDuration, dashCooldown;
+    public float shootCooldown, shootDivergence, shootForward, hitStun, hitInvincibility, hitKnockback, knockbackDecel;
 
     Vector2 movement, knockback;
-    float dashTimeLeft, dashCooldownLeft;
+    float dashTimeLeft, dashInvincibilityLeft, dashCooldownLeft;
     float shootCooldownLeft;
     float hitStunLeft, hitInvincibilityLeft;
     float vRot;
@@ -28,6 +29,7 @@ public class PlayerScript : MonoBehaviour
         dashCooldownLeft = Mathf.Max(0, dashCooldownLeft - Time.deltaTime);
         if (Input.anyKeyDown && dashCooldownLeft == 0 && movement.sqrMagnitude > .05f) {
             dashTimeLeft = dashDuration;
+            dashInvincibilityLeft = dashInvincibilityDuration;
             for (float f = 0; f < dashDuration; f += .025f) {
                 Invoke("LeaveShadow", f);
             }
@@ -84,7 +86,8 @@ public class PlayerScript : MonoBehaviour
         // Timers.
         hitStunLeft = Mathf.Max(0, hitStunLeft - Time.deltaTime);
         hitInvincibilityLeft = Mathf.Max(0, hitInvincibilityLeft - Time.deltaTime);
-        bool invincible = dashTimeLeft > 0 || hitInvincibilityLeft > 0;
+        bool invincible = dashInvincibilityLeft > 0 || hitInvincibilityLeft > 0;
+        dashInvincibilityLeft = Mathf.Max(0, dashInvincibilityLeft - Time.deltaTime);
         rb2d.simulated = !invincible;
         // Sprite.
         sr.SetAlpha(invincible ? .25f : 1);

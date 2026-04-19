@@ -6,12 +6,13 @@ public class BorderScript : MonoBehaviour
     public Material materialPulse, materialParticlePulseDissolve;
 
     public Vector2 size;
-    [HideInInspector] public Vector2 targetSize;
+    [HideInInspector] public Vector2 targetSize, initialSize;
     public float expand;
     Vector2 vSize;
 
     void Start() {
         targetSize = size;
+        initialSize = size;
         Instantiate(prefabWall, transform).GetComponent<BorderWallScript>().Init(this, BorderWallSide.Right);
         Instantiate(prefabWall, transform).GetComponent<BorderWallScript>().Init(this, BorderWallSide.Left);
         Instantiate(prefabWall, transform).GetComponent<BorderWallScript>().Init(this, BorderWallSide.Top);

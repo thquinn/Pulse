@@ -275,6 +275,7 @@ MonoBehaviour:
   materialParticlePulseDissolve: {fileID: 2100000, guid: d2ab8bd1ed6a76f4bb2ccd321a1ac119, type: 2}
   size: {x: 25, y: 15}
   targetSize: {x: 0, y: 0}
+  initialSize: {x: 0, y: 0}
   expand: 2
 --- !u!4 &365413951
 Transform:
@@ -11802,6 +11803,7 @@ MonoBehaviour:
   dashSpeedMult: 2.5
   dashAccelMult: 0.2
   dashDuration: 0.15
+  dashInvincibilityDuration: 0.25
   dashCooldown: 0.5
   shootCooldown: 0.1
   shootDivergence: 3
@@ -11959,7 +11961,7 @@ MonoBehaviour:
   playerScript: {fileID: 1788524880}
   textPopupContainerTime: {fileID: 1666736747}
   textPopupContainerScore: {fileID: 56834917}
-  waveCount: 0
+  waveNumber: 0
   timeLeftInWave: 0
   score: 0
 --- !u!4 &1791813074

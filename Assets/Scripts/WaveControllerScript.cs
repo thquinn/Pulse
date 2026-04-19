@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class WaveControllerScript : MonoBehaviour {
     public static WaveControllerScript instance;
 
     static float PREWAVE_PAUSE = 3;
     static float SHRINK = 1, MIN_DIST = 5, MAX_DIST = 12;
+    static int SCORE_EMITTER = 100;
 
     public GameObject prefabEmitter;
 
@@ -14,7 +16,7 @@ public class WaveControllerScript : MonoBehaviour {
     public PlayerScript playerScript;
     public UITextPopupContainerScript textPopupContainerTime, textPopupContainerScore;
 
-    [HideInInspector] public int waveCount;
+    [HideInInspector] public int waveNumber;
     [HideInInspector] public float timeLeftInWave;
     [HideInInspector] public int score;
     int hitsThisWave;
@@ -25,6 +27,7 @@ public class WaveControllerScript : MonoBehaviour {
     void Start() {
         instance = this;
         emitters = new List<EmitterScript>();
+        waveNumber = 1;
         prewavePause = PREWAVE_PAUSE;
     }
     void StartWave() {
@@ -39,8 +42,7 @@ public class WaveControllerScript : MonoBehaviour {
             emitters.Add(emitter.GetComponent<EmitterScript>());
         }
         // Set timer.
-        waveCount++;
-        timeLeftInWave = 30;
+        timeLeftInWave = 15 + GetEmitterCountForWave(waveNumber) * 5;
         hitsThisWave = 0;
     }
     List<Vector2> GetSpawnCoors() {
@@ -50,7 +52,7 @@ public class WaveControllerScript : MonoBehaviour {
         List<Vector2> spawnCoors = new List<Vector2>();
         spawnCoors.Add(samples[0]);
         samples.RemoveAt(0);
-        int n = 3;
+        int n = GetEmitterCountForWave(waveNumber);
         while (samples.Count > 0 && spawnCoors.Count < n) {
             bool found = false;
             for (int i = 0; i < samples.Count; i++) {
@@ -71,6 +73,12 @@ public class WaveControllerScript : MonoBehaviour {
         Vector2 maxes = new Vector2(spawnCoors.Max(c => c.x), spawnCoors.Max(c => c.y));
         Vector2 shift = (mins + maxes) / -2;
         return spawnCoors.Select(c => c + shift).ToList();
+    }
+    int GetEmitterCountForWave(int waveNumber) {
+        return 2 + waveNumber;
+    }
+    public void ScoreEmitterKill() {
+        score += SCORE_EMITTER * waveNumber;
     }
 
     void Update() {
@@ -104,6 +112,27 @@ public class WaveControllerScript : MonoBehaviour {
             pulse.Dissolve();
         }
         prewavePause = PREWAVE_PAUSE;
+        // Time left bonus.
+        int millisLeft = Mathf.FloorToInt(timeLeftInWave * 1000);
+        score += millisLeft;
+        textPopupContainerScore.AddPopup($"time bonus +{millisLeft:N0}");
+        if (timeLeftInWave >= 10) {
+            waveNumber++;
+            int bonus = SCORE_EMITTER * GetEmitterCountForWave(waveNumber + 1) * (waveNumber + 1);
+            score += bonus;
+            
+            textPopupContainerScore.AddPopup($"wave skip bonus +{bonus:N0}");
+        }
+        waveNumber++;
+        // Grow border.
+        float initialArea = borderScript.initialSize.x * borderScript.initialSize.y;
+        float aspect = borderScript.initialSize.x / borderScript.initialSize.y;
+        float areaMult = GetEmitterCountForWave(waveNumber) / (float)GetEmitterCountForWave(1);
+        areaMult = Mathf.Pow(areaMult, 0.5f);
+        float area = initialArea * areaMult;
+        float height = Mathf.Sqrt(area / aspect);
+        float width = height * aspect;
+        borderScript.targetSize = new Vector2(width, height);
     }
 
     public void GotHit() {

@@ -63,6 +63,7 @@ public class EmitterScript : MonoBehaviour {
             if (timer >= cooldown && !noPulseOnDeath) {
                 EmitPulse();
             }
+            WaveControllerScript.instance.ScoreEmitterKill();
             Destroy(gameObject);
             return;
         }
