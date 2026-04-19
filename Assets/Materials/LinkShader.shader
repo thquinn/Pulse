@@ -31,6 +31,7 @@ Shader "thquinn/LinkShader"
 	float4 _MainTex_ST;
 
 	float _Thickness;
+	float _AnimSpeed;
 
 	struct appdata{
 		float4 vertex : POSITION;
@@ -58,7 +59,7 @@ Shader "thquinn/LinkShader"
 		float scale = length(unity_ObjectToWorld._m00_m10_m20);
 		float thickness = _Thickness;
 		// Effects.
-		float x = uv.x + _Time.y * sign(uv.y);
+		float x = uv.x + _Time.y * sign(uv.y) * _AnimSpeed;
 		float normsin = (sin(x * 10 * scale) + 1) / 2;
 		thickness += normsin * .1;
 		// Back to the rest...

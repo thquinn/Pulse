@@ -201,7 +201,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 896c0ac0678d1fa41a79683a469f5446, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  spriteBulletUpgraded: {fileID: 21300000, guid: 3a16f97e0ba1462448699c1612f371b0, type: 3}
   sr: {fileID: 3156363087775768121}
   rb2d: {fileID: 105292060923407635}
+  c2d: {fileID: 1107611131695934874}
   speed: 30
-  lifespan: 1
+  lifespan: 0.5

@@ -41,7 +41,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AnimSpeed: 0
+    - _AnimSpeed: 0.25
     - _EnableExternalAlpha: 0
     - _Revealed: 0.319
     - _Thickness: 0.133

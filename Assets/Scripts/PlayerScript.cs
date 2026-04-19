@@ -1,9 +1,11 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerScript : MonoBehaviour
 {
-    public GameObject prefabPulse, prefabBullet;
+    public GameObject prefabBullet;
 
+    public BorderScript borderScript;
     public SpriteRenderer sr;
 
     public float speed, accel, dashSpeedMult, dashAccelMult, dashDuration, dashCooldown, shootCooldown, shootDivergence, shootForward;
@@ -12,18 +14,14 @@ public class PlayerScript : MonoBehaviour
     float dashTimeLeft, dashCooldownLeft;
     float shootCooldownLeft;
     float vRot;
-    bool debugEmitted;
 
     void Update() {
         // Dash.
         dashCooldownLeft = Mathf.Max(0, dashCooldownLeft - Time.deltaTime);
-        if (Input.anyKeyDown) {
-            if (!debugEmitted) {
-                GameObject pulse = Instantiate(prefabPulse);
-                pulse.transform.localPosition = transform.localPosition;
-                debugEmitted = true;
-            } else if (dashCooldownLeft == 0 && movement.sqrMagnitude > .1f) {
-                dashTimeLeft = dashDuration;
+        if (Input.anyKeyDown && dashCooldownLeft == 0 && movement.sqrMagnitude > .05f) {
+            dashTimeLeft = dashDuration;
+            for (float f = 0; f < dashDuration; f += .025f) {
+                Invoke("LeaveShadow", f);
             }
         }
         // Movement.
@@ -40,6 +38,11 @@ public class PlayerScript : MonoBehaviour
             movement3 = movement.normalized * dashSpeedMult;
         }
         transform.localPosition += movement3 * speed * Time.deltaTime;
+        transform.localPosition = new Vector3(
+            Mathf.Clamp(transform.localPosition.x, -borderScript.size.x / 2, borderScript.size.x / 2),
+            Mathf.Clamp(transform.localPosition.y, -borderScript.size.y / 2, borderScript.size.y / 2),
+            transform.localPosition.z
+        );
         // Look.
         Vector2 look = GetStick("Horizontal2", "Vertical2");
         look.x *= -1;
@@ -50,8 +53,8 @@ public class PlayerScript : MonoBehaviour
             desiredLookAngle = Mathf.Atan2(movement.y, movement.x) * Mathf.Rad2Deg;
         }
         if (desiredLookAngle != -999) {
-            float z = Mathf.SmoothDampAngle(transform.localRotation.eulerAngles.z, desiredLookAngle, ref vRot, .02f);
-            transform.localRotation = Quaternion.Euler(0, 0, z);
+            float z = Mathf.SmoothDampAngle(sr.transform.localRotation.eulerAngles.z, desiredLookAngle, ref vRot, .02f);
+            sr.transform.localRotation = Quaternion.Euler(0, 0, z);
         }
         // Shoot.
         if (look != Vector2.zero && dashTimeLeft == 0) {
@@ -83,5 +86,17 @@ public class PlayerScript : MonoBehaviour
             v.Normalize();
         }
         return v;
+    }
+    public float GetDashCooldown() {
+        return dashCooldownLeft / dashCooldown;
+    }
+
+    void LeaveShadow() {
+        Instantiate(gameObject).GetComponent<PlayerScript>().TurnIntoShadow();
+    }
+    public void TurnIntoShadow() {
+        gameObject.AddComponent<DashShadowScript>();
+        Destroy(gameObject.GetComponentInChildren<DashCooldownScript>().gameObject);
+        Destroy(this);
     }
 }
