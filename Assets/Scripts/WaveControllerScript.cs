@@ -42,7 +42,7 @@ public class WaveControllerScript : MonoBehaviour {
             emitters.Add(emitter.GetComponent<EmitterScript>());
         }
         // Set timer.
-        timeLeftInWave = 15 + GetEmitterCountForWave(waveNumber) * 5;
+        timeLeftInWave = GetTimeLimitForWave(waveNumber);
         hitsThisWave = 0;
     }
     List<Vector2> GetSpawnCoors() {
@@ -77,6 +77,9 @@ public class WaveControllerScript : MonoBehaviour {
     int GetEmitterCountForWave(int waveNumber) {
         return 2 + waveNumber;
     }
+    float GetTimeLimitForWave(int waveNumber) {
+        return 15 + GetEmitterCountForWave(waveNumber) * 5;
+    }
     public void ScoreEmitterKill() {
         score += SCORE_EMITTER * waveNumber;
     }
@@ -102,17 +105,19 @@ public class WaveControllerScript : MonoBehaviour {
     void EndWave() {
         Invoke("DissolveAllPulses", 1);
         prewavePause = PREWAVE_PAUSE;
+        // Wave skip.
+        if (timeLeftInWave >= 20) {
+            waveNumber++;
+            int bonus = SCORE_EMITTER * GetEmitterCountForWave(waveNumber) * waveNumber;
+            bonus += Mathf.FloorToInt(GetTimeLimitForWave(waveNumber) * 1000);
+            score += bonus;
+            textPopupContainerScore.AddPopup($"wave skip bonus +{bonus:N0}");
+        }
         // Time left bonus.
         int millisLeft = Mathf.FloorToInt(timeLeftInWave * 1000);
         score += millisLeft;
         textPopupContainerScore.AddPopup($"time bonus +{millisLeft:N0}");
-        if (timeLeftInWave >= 20) {
-            waveNumber++;
-            int bonus = SCORE_EMITTER * GetEmitterCountForWave(waveNumber + 1) * (waveNumber + 1);
-            score += bonus;
-            
-            textPopupContainerScore.AddPopup($"wave skip bonus +{bonus:N0}");
-        }
+
         waveNumber++;
         // Grow border.
         float initialArea = borderScript.initialSize.x * borderScript.initialSize.y;

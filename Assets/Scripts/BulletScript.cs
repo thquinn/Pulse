@@ -12,7 +12,7 @@ public class BulletScript : MonoBehaviour {
     public float speed, lifespan;
 
     float t;
-    bool upgraded;
+    bool upgraded, destroying;
 
     void Start() {
         float zRad = transform.localRotation.eulerAngles.z * Mathf.Deg2Rad;
@@ -49,13 +49,16 @@ public class BulletScript : MonoBehaviour {
             PooledParticleScript.Trigger(PooledParticleType.EmitterDamage, transform.localPosition - normal * .2f, Quaternion.LookRotation(normal));
         }
         Destroy(gameObject);
+        destroying = true;
     }
     public void OnTriggerExit2D(Collider2D collision) {
+        if (destroying) return;
         // When a bullet leaves a pulse, it gets upgraded.
         if (!upgraded) {
             sr.sprite = spriteBulletUpgraded;
             transform.localScale *= 1.5f;
             upgraded = true;
+            PooledParticleScript.Trigger(PooledParticleType.BulletUpgrade, transform.localPosition, Quaternion.identity);
         }
     }
 }
