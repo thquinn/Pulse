@@ -12,6 +12,7 @@ public class WaveControllerScript : MonoBehaviour {
 
     public BorderScript borderScript;
     public PlayerScript playerScript;
+    public UITextPopupContainerScript textPopupContainerTime, textPopupContainerScore;
 
     [HideInInspector] public int waveCount;
     [HideInInspector] public float timeLeftInWave;
@@ -73,6 +74,9 @@ public class WaveControllerScript : MonoBehaviour {
     }
 
     void Update() {
+        if (Input.GetKeyDown(KeyCode.F2)) {
+            textPopupContainerScore.AddPopup("blah " + Random.Range(10000, 9999999));
+        }
         for (int i = emitters.Count - 1; i >= 0; i--) {
             if (emitters[i] == null) emitters.RemoveAt(i);
         }
@@ -100,8 +104,13 @@ public class WaveControllerScript : MonoBehaviour {
     }
 
     public void GotHit() {
-        int penalty = 3 + 2 * hitsThisWave;
+        int penalty = 2 + 2 * hitsThisWave;
         timeLeftInWave = Mathf.Max(0, timeLeftInWave - penalty);
         hitsThisWave++;
+        if (hitsThisWave == 1) {
+            textPopupContainerTime.AddPopup($"hit -{penalty}<voffset=.35em><size=50%>000");
+        } else {
+            textPopupContainerTime.AddPopup($"hit ×{hitsThisWave} -{penalty}<voffset=.35em><size=50%>000");
+        }
     }
 }

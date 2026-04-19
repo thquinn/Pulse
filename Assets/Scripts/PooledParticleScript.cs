@@ -20,21 +20,17 @@ public class PooledParticleScript : MonoBehaviour
         DICT[type] = this;
         particles = GetComponent<ParticleSystem>();
     }
-    public void Trigger(Vector2 position, Quaternion rotation) {
+    public void Trigger(Vector2 position, Quaternion rotation, float emitMultiplier = 1) {
         var ep = new ParticleSystem.EmitParams();
         ep.position = position;
         ep.rotation3D = rotation.eulerAngles;
-        ep.applyShapeToPosition = true; // shape module offsets apply relative to ep.position
-        particles.Emit(ep, (int)particles.emission.GetBurst(0).count.constant);
+        ep.applyShapeToPosition = true;
+        particles.Emit(ep, Mathf.RoundToInt(particles.emission.GetBurst(0).count.constant * emitMultiplier));
     }
     public void TriggerScaledCircle(Vector2 position, Quaternion rotation, float scale) {
         var shape = particles.shape;
         shape.radius = scale;
-        var burstCount = particles.emission.GetBurst(0).count;
-        float oldConstant = burstCount.constant;
-        burstCount.constant = oldConstant * scale;
-        Trigger(position, rotation);
-        burstCount.constant = oldConstant;
+        Trigger(position, rotation, scale);
     }
 }
 
