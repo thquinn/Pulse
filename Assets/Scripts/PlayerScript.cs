@@ -7,12 +7,14 @@ public class PlayerScript : MonoBehaviour
 
     public BorderScript borderScript;
     public SpriteRenderer sr;
+    public Rigidbody2D rb2d;
 
-    public float speed, accel, dashSpeedMult, dashAccelMult, dashDuration, dashCooldown, shootCooldown, shootDivergence, shootForward;
+    public float speed, accel, dashSpeedMult, dashAccelMult, dashDuration, dashCooldown, shootCooldown, shootDivergence, shootForward, hitStun, hitInvincibility, hitKnockback, knockbackDecel;
 
-    Vector2 movement;
+    Vector2 movement, knockback;
     float dashTimeLeft, dashCooldownLeft;
     float shootCooldownLeft;
+    float hitStunLeft, hitInvincibilityLeft;
     float vRot;
 
     void Update() {
@@ -38,6 +40,8 @@ public class PlayerScript : MonoBehaviour
             movement3 = movement.normalized * dashSpeedMult;
         }
         transform.localPosition += movement3 * speed * Time.deltaTime;
+        transform.localPosition += (Vector3)knockback * Time.deltaTime;
+        knockback = Vector2.MoveTowards(knockback, Vector2.zero, knockbackDecel * Time.deltaTime);
         transform.localPosition = new Vector3(
             Mathf.Clamp(transform.localPosition.x, -borderScript.size.x / 2, borderScript.size.x / 2),
             Mathf.Clamp(transform.localPosition.y, -borderScript.size.y / 2, borderScript.size.y / 2),
@@ -71,11 +75,20 @@ public class PlayerScript : MonoBehaviour
                 shootCooldownLeft += shootCooldown;
             }
         }
+        // Timers.
+        hitStunLeft = Mathf.Max(0, hitStunLeft - Time.deltaTime);
+        hitInvincibilityLeft = Mathf.Max(0, hitInvincibilityLeft - Time.deltaTime);
+        bool invincible = dashTimeLeft > 0 || hitInvincibilityLeft > 0;
+        rb2d.simulated = !invincible;
         // Sprite.
-        sr.SetAlpha(dashTimeLeft > 0 ? .25f : 1);
+        sr.SetAlpha(invincible ? .25f : 1);
+        if (hitInvincibilityLeft > 0 && Time.time % 0.2f < 0.1f) {
+            sr.SetAlpha(0);
+        }
     }
 
     Vector2 GetStick(string xLabel, string yLabel) {
+        if (hitStunLeft > 0) return Vector2.zero;
         float jx = Input.GetAxis(xLabel);
         float jy = Input.GetAxis(yLabel);
         Vector2 v = new Vector2(jx, jy);
@@ -98,5 +111,20 @@ public class PlayerScript : MonoBehaviour
         gameObject.AddComponent<DashShadowScript>();
         Destroy(gameObject.GetComponentInChildren<DashCooldownScript>().gameObject);
         Destroy(this);
+    }
+
+    public void OnTriggerEnter2D(Collider2D collision) {
+        GetHit();
+        if (collision.GetComponent<EmitterScript>() != null) {
+            Vector2 knockbackDirection = (transform.localPosition - collision.transform.localPosition).normalized;
+            knockback = knockbackDirection * hitKnockback;
+        }
+    }
+    bool GetHit() {
+        if (dashTimeLeft > 0 || hitInvincibilityLeft > 0) return false;
+        movement = Vector2.zero;
+        hitStunLeft = hitStun;
+        hitInvincibilityLeft = hitInvincibility;
+        return true;
     }
 }
