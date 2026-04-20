@@ -126,9 +126,10 @@ public class WaveControllerScript : MonoBehaviour {
         int millisLeft = Mathf.FloorToInt(timeLeftInWave * 1000);
         score += millisLeft;
         textPopupContainerScore.AddPopup($"time bonus +{millisLeft:N0}");
-
         waveNumber++;
-        // Grow border.
+        SetBorderSize();
+    }
+    void SetBorderSize() {
         float initialArea = borderScript.initialSize.x * borderScript.initialSize.y;
         float aspect = borderScript.initialSize.x / borderScript.initialSize.y;
         float areaMult = GetEmitterCountForWave(waveNumber) / (float)GetEmitterCountForWave(1);
@@ -138,7 +139,10 @@ public class WaveControllerScript : MonoBehaviour {
         float width = height * aspect;
         borderScript.targetSize = new Vector2(width, height);
     }
-    void DissolveAll(bool particles = true) {
+    void DissolveAll() {
+        DissolveAll(true);
+    }
+    void DissolveAll(bool particles) {
         EmitterScript[] emitters = FindObjectsByType<EmitterScript>().ToArray();
         foreach (EmitterScript emitter in emitters) {
             Destroy(emitter.gameObject);
@@ -180,6 +184,8 @@ public class WaveControllerScript : MonoBehaviour {
         score = 0;
         gameOver = false;
         DissolveAll(false);
+        SetBorderSize();
         PlayerScript.instance.transform.localPosition = Vector3.zero;
+        CameraScript.instance.Reset();
     }
 }

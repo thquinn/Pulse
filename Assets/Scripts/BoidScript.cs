@@ -1,3 +1,4 @@
+using Assets.Code;
 using UnityEngine;
 
 public class BoidScript : MonoBehaviour
@@ -15,6 +16,18 @@ public class BoidScript : MonoBehaviour
     public Vector2 rangeSeek;
     public float weightCohesion, weightAlignment, weightSeparation;
     public Vector2 rangeSeparation;
+    public float vfxSpawnSpeed;
+
+    float spawnAnimT;
+
+    void Start() {
+        transform.localScale = Vector3.zero;
+    }
+    void Update() {
+        spawnAnimT = Mathf.Min(spawnAnimT + Time.deltaTime * vfxSpawnSpeed, 1);
+        float scale = EasingFunctions.EaseOutBack(0, 1, spawnAnimT);
+        transform.localScale = new Vector3(scale, scale, 1);
+    }
 
     void FixedUpdate() {
         Vector2 desired = Vector2.zero;

@@ -126,11 +126,13 @@ public class PlayerScript : MonoBehaviour
     }
 
     public void OnTriggerEnter2D(Collider2D collision) {
-        GetHit();
-        if (collision.GetComponent<EmitterScript>() != null) {
+        EmitterScript emitter = collision.GetComponent<EmitterScript>();
+        if (emitter != null) {
+            if (emitter.noCollisionTime > 0) return;
             Vector2 knockbackDirection = (transform.localPosition - collision.transform.localPosition).normalized;
             knockback = knockbackDirection * hitKnockback;
         }
+        GetHit();
     }
     bool GetHit() {
         if (dashTimeLeft > 0 || hitInvincibilityLeft > 0) return false;

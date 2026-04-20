@@ -5618,6 +5618,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   type: 0
+  particles: {fileID: 0}
 --- !u!1 &476851628
 GameObject:
   m_ObjectHideFlags: 0
@@ -7227,6 +7228,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   type: 7
+  particles: {fileID: 0}
 --- !u!199 &1051296505
 ParticleSystemRenderer:
   serializedVersion: 7
@@ -12804,6 +12806,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   type: 2
+  particles: {fileID: 0}
 --- !u!199 &1333804924
 ParticleSystemRenderer:
   serializedVersion: 7
@@ -17986,6 +17989,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   type: 6
+  particles: {fileID: 0}
 --- !u!199 &1444795071
 ParticleSystemRenderer:
   serializedVersion: 7
@@ -23097,6 +23101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   type: 1
+  particles: {fileID: 0}
 --- !u!199 &1596389838
 ParticleSystemRenderer:
   serializedVersion: 7
@@ -28271,6 +28276,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   type: 3
+  particles: {fileID: 0}
 --- !u!199 &1744032954
 ParticleSystemRenderer:
   serializedVersion: 7
@@ -33398,6 +33404,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   type: 5
+  particles: {fileID: 0}
 --- !u!199 &1873816000
 ParticleSystemRenderer:
   serializedVersion: 7
@@ -43380,6 +43387,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PooledParticleScript
   type: 4
+  particles: {fileID: 0}
 --- !u!1 &2044295541
 GameObject:
   m_ObjectHideFlags: 0

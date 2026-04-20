@@ -173,6 +173,7 @@ MonoBehaviour:
   rb2d: {fileID: 7270103356177061486}
   speed: 1
   spawnDistance: 1.33
+  vfxSpawnSpeed: 4
 --- !u!114 &5242603188977369727
 MonoBehaviour:
   m_ObjectHideFlags: 0

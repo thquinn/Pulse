@@ -219,16 +219,19 @@ MonoBehaviour:
   prefabPreboid: {fileID: 4942702599303102831, guid: c8733f196da5f494c904b7035e605c33, type: 3}
   prefabBoid: {fileID: 648626619114548925, guid: f1d077daa0022754cbf59ad961ced426, type: 3}
   sr: {fileID: 7833360964474193447}
+  damageCollider: {fileID: 1474025183621790550}
+  rb2d: {fileID: 8833524511333938354}
   sfxHit: {fileID: 6153760701533034304}
   sfxPulse: {fileID: 7792403736861689894}
   sfxDie: {fileID: 3179218212380509849}
   hp: 60
   cooldown: 5
+  noCollisionTime: 1
+  vfxSpawnSpeed: 4
   vfxDamageVelocity: 8
   vfxDamageDampTime: 0.05
   vfxDamageCooldown: 0.1
   noPulseOnDeath: 0
-  linkedEmitters: []
 --- !u!50 &8833524511333938354
 Rigidbody2D:
   serializedVersion: 5

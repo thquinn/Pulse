@@ -131,6 +131,8 @@ MonoBehaviour:
   weightAlignment: 0.1
   weightSeparation: 0.1
   rangeSeparation: {x: 0.5, y: 0.2}
+  vfxSpawnSpeed: 4
+  spawnAnimT: 0
 --- !u!114 &7142347630805112498
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using Assets.Code;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,8 +11,8 @@ public class EmitterScript : MonoBehaviour {
     public SpriteRenderer sr;
     public AudioSource sfxHit, sfxPulse, sfxDie;
 
-    public float hp, cooldown;
-    public float vfxDamageVelocity, vfxDamageDampTime, vfxDamageCooldown;
+    public float hp, cooldown, noCollisionTime;
+    public float vfxSpawnSpeed, vfxDamageVelocity, vfxDamageDampTime, vfxDamageCooldown;
     [HideInInspector] public bool noPulseOnDeath;
 
     float maxHP;
@@ -19,12 +20,14 @@ public class EmitterScript : MonoBehaviour {
     int pulseCount;
     [HideInInspector] public Dictionary<EmitterScript, LinkScript> links;
     Vector3 vScale;
+    float spawnAnimT;
     float vfxDamageLastTime;
 
     void Start() {
         maxHP = hp;
         timer = cooldown;
         links = new();
+        transform.localScale = Vector3.zero;
     }
 
     void Update() {
@@ -32,7 +35,14 @@ public class EmitterScript : MonoBehaviour {
         MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
         propertyBlock.SetFloat("_Revealed", timer / cooldown + .001f);
         sr.SetPropertyBlock(propertyBlock);
-        transform.localScale = Vector3.SmoothDamp(transform.localScale, Vector3.one, ref vScale, vfxDamageDampTime);
+        if (spawnAnimT == 1) {
+            transform.localScale = Vector3.SmoothDamp(transform.localScale, Vector3.one, ref vScale, vfxDamageDampTime);
+        } else {
+            spawnAnimT = Mathf.Min(spawnAnimT + Time.deltaTime * vfxSpawnSpeed, 1);
+            float scale = EasingFunctions.EaseOutBack(0, 1, spawnAnimT);
+            transform.localScale = new Vector3(scale, scale, 1);
+        }
+        noCollisionTime = Mathf.Max(0, noCollisionTime - Time.deltaTime);
     }
 
     public void Pulsed(EmitterScript parentEmitter) {

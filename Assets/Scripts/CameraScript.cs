@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class CameraScript : MonoBehaviour
 {
+    public static CameraScript instance;
+
     public PlayerScript playerScript;
     public BorderScript borderScript;
 
@@ -9,6 +11,10 @@ public class CameraScript : MonoBehaviour
     public float dampTime;
 
     Vector3 v;
+
+    void Start() {
+        instance = this;
+    }
 
     void Update()
     {
@@ -21,5 +27,12 @@ public class CameraScript : MonoBehaviour
         targetPosition.y -= extents.y * halfSize.y;
         targetPosition.z = transform.localPosition.z;
         transform.localPosition = Vector3.SmoothDamp(transform.localPosition, targetPosition, ref v, dampTime);
+    }
+
+    public void Reset() {
+        Vector3 pos = transform.localPosition;
+        pos.x = 0;
+        pos.y = 0;
+        transform.localPosition = pos;
     }
 }
