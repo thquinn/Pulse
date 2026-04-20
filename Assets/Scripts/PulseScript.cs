@@ -36,9 +36,11 @@ public class PulseScript : MonoBehaviour
         collidreInnerCircle.radius = collidreOuterCircle.radius - initialColliderRadiusDelta / transform.localScale.x;
         sr.SetAlpha(fade);
     }
-    public void Dissolve() {
+    public void Dissolve(bool particles = true) {
         Destroy(gameObject);
-        PooledParticleScript.TriggerScaledCircle(PooledParticleType.PulseDissolve, transform.localPosition, Quaternion.identity, transform.localScale.x / 2);
+        if (particles) {
+            PooledParticleScript.TriggerScaledCircle(PooledParticleType.PulseDissolve, transform.localPosition, Quaternion.identity, transform.localScale.x / 2);
+        }
     }
 
     private void OnTriggerStay2D(Collider2D collision) {

@@ -16,6 +16,7 @@ public class WaveControllerScript : MonoBehaviour {
     public PlayerScript playerScript;
     public UITextPopupContainerScript textPopupContainerTime, textPopupContainerScore;
 
+    [HideInInspector] public bool started, gameOver;
     [HideInInspector] public int waveNumber;
     [HideInInspector] public float timeLeftInWave;
     [HideInInspector] public int score;
@@ -85,11 +86,19 @@ public class WaveControllerScript : MonoBehaviour {
     }
 
     void Update() {
+        if (gameOver) {
+            Time.timeScale = Mathf.Max(0, Time.timeScale - Time.unscaledDeltaTime);
+            return;
+        }
+        if (!started) return;
         for (int i = emitters.Count - 1; i >= 0; i--) {
             if (emitters[i] == null) emitters.RemoveAt(i);
         }
         if (emitters.Count > 0) {
             timeLeftInWave = Mathf.Max(timeLeftInWave - Time.deltaTime, 0);
+            if (timeLeftInWave == 0) {
+                gameOver = true;
+            }
             if (emitters.Count == 1) {
                 emitters[0].noPulseOnDeath = true;
             }
@@ -103,7 +112,7 @@ public class WaveControllerScript : MonoBehaviour {
         }
     }
     void EndWave() {
-        Invoke("DissolveAllPulses", 1);
+        Invoke("DissolveAll", 1);
         prewavePause = PREWAVE_PAUSE;
         // Wave skip.
         if (timeLeftInWave >= 20) {
@@ -129,13 +138,27 @@ public class WaveControllerScript : MonoBehaviour {
         float width = height * aspect;
         borderScript.targetSize = new Vector2(width, height);
     }
-    void DissolveAllPulses() {
+    void DissolveAll(bool particles = true) {
+        EmitterScript[] emitters = FindObjectsByType<EmitterScript>().ToArray();
+        foreach (EmitterScript emitter in emitters) {
+            Destroy(emitter.gameObject);
+        }
         PulseScript[] pulses = FindObjectsByType<PulseScript>().ToArray();
         foreach (PulseScript pulse in pulses) {
-            pulse.Dissolve();
+            pulse.Dissolve(particles);
+        }
+        BoidDamageScript[] boids = FindObjectsByType<BoidDamageScript>().ToArray();
+        foreach (BoidDamageScript boid in boids) {
+            boid.Die(particles);
         }
         if (pulses.Length > 0) {
             SFXScript.SFXPulseDissolve();
+        }
+        if (!particles) {
+            BulletScript[] bullets = FindObjectsByType<BulletScript>().ToArray();
+            foreach (BulletScript bullet in bullets) {
+                Destroy(bullet.gameObject);
+            }
         }
     }
 
@@ -148,5 +171,15 @@ public class WaveControllerScript : MonoBehaviour {
         } else {
             textPopupContainerTime.AddPopup($"hit ×{hitsThisWave} -{penalty}<voffset=.35em><size=50%>000");
         }
+    }
+
+    public void Restart() {
+        Time.timeScale = 1;
+        waveNumber = 1;
+        prewavePause = PREWAVE_PAUSE;
+        score = 0;
+        gameOver = false;
+        DissolveAll(false);
+        PlayerScript.instance.transform.localPosition = Vector3.zero;
     }
 }

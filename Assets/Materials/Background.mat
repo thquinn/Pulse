@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: ParticlePulseDissolve
-  m_Shader: {fileID: 4800000, guid: d6f6d8f0db7a7354d8dd4c28f008d347, type: 3}
+  m_Name: Background
+  m_Shader: {fileID: 4800000, guid: 9adeaa34b042eab46ac4f01c148b2d78, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []

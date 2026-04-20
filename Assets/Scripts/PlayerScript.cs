@@ -34,6 +34,7 @@ public class PlayerScript : MonoBehaviour
                 Invoke("LeaveShadow", f);
             }
             SFXScript.SFXDash();
+            WaveControllerScript.instance.started = true;
         }
         // Movement.
         Vector3 movement3;

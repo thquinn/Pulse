@@ -7,7 +7,12 @@ public class BoidDamageScript : MonoBehaviour
     public void Damage(int amount) {
         hp -= amount;
         if (hp <= 0) {
-            Destroy(gameObject);
+            Die();
+        }
+    }
+    public void Die(bool particles = true) {
+        Destroy(gameObject);
+        if (particles) {
             PooledParticleScript.Trigger(PooledParticleType.BoidDie, transform.localPosition, Quaternion.identity);
         }
     }

@@ -3,16 +3,21 @@ using UnityEngine;
 
 public class PooledParticleScript : MonoBehaviour
 {
-    static Dictionary<PooledParticleType, PooledParticleScript> DICT;
+    public static Dictionary<PooledParticleType, PooledParticleScript> DICT;
     public static void Trigger(PooledParticleType type, Vector2 position, Quaternion rotation) {
         DICT[type].Trigger(position, rotation);
     }
     public static void TriggerScaledCircle(PooledParticleType type, Vector2 position, Quaternion rotation, float scale) {
         DICT[type].TriggerScaledCircle(position, rotation, scale);
     }
+    public static void ClearAllParticles() {
+        foreach (PooledParticleScript p in DICT.Values) {
+            p.particles?.Clear();
+        }
+    }
 
     public PooledParticleType type;
-    ParticleSystem particles;
+    [HideInInspector] public ParticleSystem particles;
 
     void Start() {
         if (DICT == null) DICT = new();
