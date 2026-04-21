@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
 using UnityEngine.UI;
 
 public class PlayerScript : MonoBehaviour
@@ -7,12 +9,15 @@ public class PlayerScript : MonoBehaviour
 
     public GameObject prefabBullet;
 
+    public Camera cam;
     public BorderScript borderScript;
     public SpriteRenderer sr;
     public Rigidbody2D rb2d;
 
     public float speed, accel, dashSpeedMult, dashAccelMult, dashDuration, dashInvincibilityDuration, dashCooldown;
     public float shootCooldown, shootDivergence, shootForward, hitStun, hitInvincibility, hitKnockback, knockbackDecel;
+    [HideInInspector] public bool anyButtonDown;
+    [HideInInspector] public bool keyboardControls;
 
     Vector2 movement, knockback;
     float dashTimeLeft, dashInvincibilityLeft, dashCooldownLeft;
@@ -21,13 +26,16 @@ public class PlayerScript : MonoBehaviour
     float vRot;
 
     void Start() {
+        Application.targetFrameRate = 60;
         instance = this;
+        InputSystem.onAnyButtonPress.Call(OnAnyButtonPress);
     }
 
     void Update() {
         // Dash.
         dashCooldownLeft = Mathf.Max(0, dashCooldownLeft - Time.deltaTime);
-        if (Input.anyKeyDown && dashTimeLeft == 0 && dashCooldownLeft == 0 && movement.sqrMagnitude > .05f) {
+        bool dashButtonDown = anyButtonDown || Mouse.current.rightButton.ReadValue() > 0;
+        if (dashButtonDown && dashTimeLeft == 0 && dashCooldownLeft == 0 && movement.sqrMagnitude > .05f) {
             dashTimeLeft = dashDuration;
             dashInvincibilityLeft = dashInvincibilityDuration;
             for (float f = 0; f < dashDuration; f += .025f) {
@@ -38,7 +46,7 @@ public class PlayerScript : MonoBehaviour
         }
         // Movement.
         Vector3 movement3;
-        Vector2 desired = GetStick("Horizontal", "Vertical");
+        Vector2 desired = GetStick(0);
         movement = Vector2.MoveTowards(movement, desired, accel * Time.deltaTime * (dashTimeLeft > 0 ? dashAccelMult : 1));
         if (dashTimeLeft == 0) {
             movement3 = movement;
@@ -58,8 +66,7 @@ public class PlayerScript : MonoBehaviour
             transform.localPosition.z
         );
         // Look.
-        Vector2 look = GetStick("Horizontal2", "Vertical2");
-        look.x *= -1;
+        Vector2 look = GetStick(1);
         float desiredLookAngle = -999;
         if (look != Vector2.zero) {
             desiredLookAngle = Mathf.Atan2(look.y, look.x) * Mathf.Rad2Deg;
@@ -71,7 +78,8 @@ public class PlayerScript : MonoBehaviour
             sr.transform.parent.localRotation = Quaternion.Euler(0, 0, z);
         }
         // Shoot.
-        if (look != Vector2.zero && dashTimeLeft == 0) {
+        bool shoot = !keyboardControls || Mouse.current.leftButton.ReadValue() > 0;
+        if (shoot && look != Vector2.zero && dashTimeLeft == 0) {
             if (shootCooldownLeft > 0) {
                 shootCooldownLeft -= Time.deltaTime;
             }
@@ -99,18 +107,33 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    Vector2 GetStick(string xLabel, string yLabel) {
+    Vector2 GetStick(int index) {
         if (hitStunLeft > 0) return Vector2.zero;
-        float jx = Input.GetAxis(xLabel);
-        float jy = Input.GetAxis(yLabel);
-        Vector2 v = new Vector2(jx, jy);
+        Vector2 v = Vector2.zero;
+        if (Gamepad.current != null) {
+            v = (index == 0 ? Gamepad.current.leftStick : Gamepad.current.rightStick).ReadValue();
+        }
         if (v.sqrMagnitude < .2f) {
+            if (keyboardControls) return GetKeyboardStick(index);
             return Vector2.zero;
         }
+        keyboardControls = false;
         if (v.sqrMagnitude > 1) {
             v.Normalize();
         }
         return v;
+    }
+    Vector2 GetKeyboardStick(int index) {
+        if (index == 0) {
+            Vector2 stick = Vector2.zero;
+            if (Keyboard.current.aKey.isPressed) stick.x--;
+            if (Keyboard.current.dKey.isPressed) stick.x++;
+            if (Keyboard.current.sKey.isPressed) stick.y--;
+            if (Keyboard.current.wKey.isPressed) stick.y++;
+            return stick.normalized;
+        }
+        Vector2 mouseLocation = cam.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        return (mouseLocation - (Vector2)transform.localPosition).normalized;
     }
     public float GetDashCooldown() {
         return dashCooldownLeft / dashCooldown;
@@ -142,5 +165,18 @@ public class PlayerScript : MonoBehaviour
         WaveControllerScript.instance.GotHit();
         SFXScript.SFXPlayerHurt();
         return true;
+    }
+
+    void OnAnyButtonPress(InputControl control) {
+        if (control.device is Gamepad) {
+            anyButtonDown = true;
+            keyboardControls = false;
+        }
+        if (control.device is Keyboard || control.device is Mouse) {
+            keyboardControls = true;
+        }
+    }
+    void LateUpdate() {
+        anyButtonDown = false;
     }
 }
