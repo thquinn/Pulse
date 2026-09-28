@@ -11,7 +11,7 @@ public class EmitterScript : MonoBehaviour {
     public SpriteRenderer sr;
     public AudioSource sfxHit, sfxPulse, sfxDie;
 
-    public float hp, cooldown, noCollisionTime;
+    public float hp, cooldown, noCollisionTime, waveIntroHealRate;
     public float vfxSpawnSpeed, vfxDamageVelocity, vfxDamageDampTime, vfxDamageCooldown;
     [HideInInspector] public bool noPulseOnDeath;
 
@@ -43,6 +43,10 @@ public class EmitterScript : MonoBehaviour {
             transform.localScale = new Vector3(scale, scale, 1);
         }
         noCollisionTime = Mathf.Max(0, noCollisionTime - Time.deltaTime);
+        // Prevent the player from weakening all the emitters before killing one.
+        if (WaveControllerScript.instance.waveIntro) {
+            hp = Mathf.Min(maxHP, hp + Time.deltaTime * 10);
+        }
     }
 
     public void Pulsed(EmitterScript parentEmitter) {
@@ -87,6 +91,9 @@ public class EmitterScript : MonoBehaviour {
     }
     public void Damage(int amount) {
         if (hp <= 0) return;
+        if (WaveControllerScript.instance.waveIntro) {
+            amount *= 2;
+        }
         hp -= amount;
         sfxHit.pitch = 1 + 0.4f * (1 - hp / maxHP);
         sfxHit.PlayOneShot(sfxHit.clip);

@@ -16,7 +16,7 @@ public class WaveControllerScript : MonoBehaviour {
     public PlayerScript playerScript;
     public UITextPopupContainerScript textPopupContainerTime, textPopupContainerScore;
 
-    [HideInInspector] public bool started, gameOver;
+    [HideInInspector] public bool started, waveIntro, gameOver;
     [HideInInspector] public int waveNumber;
     [HideInInspector] public float timeLeftInWave;
     [HideInInspector] public int score;
@@ -45,6 +45,7 @@ public class WaveControllerScript : MonoBehaviour {
         // Set timer.
         timeLeftInWave = GetTimeLimitForWave(waveNumber);
         hitsThisWave = 0;
+        waveIntro = true;
     }
     List<Vector2> GetSpawnCoors() {
         List<Vector2> samples = PoissonDiskSampler.Sample(borderScript.size.x - SHRINK, borderScript.size.y - SHRINK, MIN_DIST, 100);
@@ -92,7 +93,10 @@ public class WaveControllerScript : MonoBehaviour {
         }
         if (!started) return;
         for (int i = emitters.Count - 1; i >= 0; i--) {
-            if (emitters[i] == null) emitters.RemoveAt(i);
+            if (emitters[i] == null) {
+                emitters.RemoveAt(i);
+                waveIntro = false;
+            }
         }
         if (emitters.Count > 0) {
             timeLeftInWave = Mathf.Max(timeLeftInWave - Time.deltaTime, 0);

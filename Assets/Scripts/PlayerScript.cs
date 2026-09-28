@@ -26,7 +26,6 @@ public class PlayerScript : MonoBehaviour
     float vRot;
 
     void Start() {
-        Application.targetFrameRate = 60;
         instance = this;
         InputSystem.onAnyButtonPress.Call(OnAnyButtonPress);
     }
@@ -149,6 +148,12 @@ public class PlayerScript : MonoBehaviour
     }
 
     public void OnTriggerEnter2D(Collider2D collision) {
+        OnTrigger(collision);
+    }
+    public void OnTriggerStay2D(Collider2D collision) {
+        OnTrigger(collision); 
+    }
+    void OnTrigger(Collider2D collision) {
         EmitterScript emitter = collision.GetComponent<EmitterScript>();
         if (emitter != null) {
             if (emitter.noCollisionTime > 0) return;

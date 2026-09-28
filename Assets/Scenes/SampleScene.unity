@@ -192,7 +192,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: any button to restart
+  m_text: dash to restart
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 00d74d05ab7215745879c4f5f12c5977, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: f564542362702c74387b4ac41ca416ea, type: 2}
